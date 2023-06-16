@@ -7,9 +7,10 @@ function App() {
   const [wheelContents, setWheelContents] = useState();
 
   var goOnce = ""
+  let API_URL = `${window.location.origin}/api`
 
   function getAllNames() {
-    return fetch('http://127.0.0.1:4280/api/GetNames?sessionName=Session1')
+    return fetch(`${API_URL}/GetNames?sessionName=Session1`)
       //.then(result => { setNames(result) })
   }
 
@@ -22,13 +23,12 @@ function App() {
 
     async function fetchData() {
       await getAllNames().then(async (ns) => {
-        var names = ns.json()
+        var names = await ns.json()
         var wheelContents = []
         var colorNumber = 0
-        let namesFinished = await names
-        namesFinished.sort((a, b) => a.Order > b.Order ? 1 : -1)
-        for (var i = 0; i < namesFinished.length; i++) {
-          wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : namesFinished[i].RowKey})
+        names.sort((a, b) => a.Order > b.Order ? 1 : -1)
+        for (var i = 0; i < names.length; i++) {
+          wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : names[i].RowKey})
           if (colorNumber === 3) { colorNumber = 0 }
           colorNumber++
         };
