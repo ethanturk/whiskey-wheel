@@ -14,7 +14,7 @@ public class CleanupOldSessions
         _tableClient = tableClient;
     }
     
-    [Function("CleanupOldSessions")]
+    //[Function("CleanupOldSessions")]
     public async Task Run([TimerTrigger("0 0 23 * * *")] MyInfo myTimer, FunctionContext context)
     {
         var logger = context.GetLogger("CleanupOldSessions");
