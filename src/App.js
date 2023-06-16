@@ -4,16 +4,9 @@ import Winwheel from 'javascript-winwheel-react'
 
 function App() {
   const [theWheel, setTheWheel] = useState();
-  const [names, setNames] = useState();
   const [wheelContents, setWheelContents] = useState();
 
-  var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
-
   var goOnce = ""
-
-  useEffect(() => {
-    buildWheel()
-  }, [goOnce])
 
   function getAllNames() {
     return fetch('http://127.0.0.1:4280/api/GetNames?sessionName=Session1')
@@ -24,21 +17,26 @@ function App() {
     alert("You have won " + indicatedSegment.text);
   }
 
-  async function buildWheel() {
-    await getAllNames().then(async (ns) => {
-      var names = ns.json()
-      var wheelContents = []
-      var colorNumber = 0
-      let namesFinished = await names
-      namesFinished.sort((a, b) => a.Order > b.Order ? 1 : -1)
-      for (var i = 0; i < namesFinished.length; i++) {
-        wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : namesFinished[i].RowKey})
-        if (colorNumber == 3) { colorNumber = 0 }
-        colorNumber++
-      };
-      setWheelContents(wheelContents)
-    })
-  }
+  useEffect(() => {
+    var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
+
+    async function fetchData() {
+      await getAllNames().then(async (ns) => {
+        var names = ns.json()
+        var wheelContents = []
+        var colorNumber = 0
+        let namesFinished = await names
+        namesFinished.sort((a, b) => a.Order > b.Order ? 1 : -1)
+        for (var i = 0; i < namesFinished.length; i++) {
+          wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : namesFinished[i].RowKey})
+          if (colorNumber === 3) { colorNumber = 0 }
+          colorNumber++
+        };
+        setWheelContents(wheelContents)
+      })
+    }
+    fetchData()
+  }, [goOnce])
   
   return <div className="App">
     <div className="thewheel" width="500" onClick={()=>theWheel.spin()}>
