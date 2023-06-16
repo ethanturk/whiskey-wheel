@@ -33,7 +33,8 @@ public class GetNames
                 names.Add(new NameEntity()
                 {
                     PartitionKey = name.PartitionKey,
-                    RowKey = name.RowKey,
+                    RowKey = name.Name,
+                    Name = name.Name,
                     Order = name.Order
                 });
             }

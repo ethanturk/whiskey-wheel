@@ -29,7 +29,8 @@ function App() {
       var names = ns.json()
       var wheelContents = []
       var colorNumber = 0
-      var namesFinished = await names
+      let namesFinished = await names
+      namesFinished.sort((a, b) => a.Order > b.Order ? 1 : -1)
       for (var i = 0; i < namesFinished.length; i++) {
         wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : namesFinished[i].RowKey})
         if (colorNumber == 3) { colorNumber = 0 }

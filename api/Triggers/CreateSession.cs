@@ -55,7 +55,8 @@ public class CreateSession
             nameEntities.Add(new NameEntity
             {
                 PartitionKey = sessionId.ToString(),
-                RowKey = name,
+                RowKey = Guid.NewGuid().ToString(),
+                Name = name,
                 Order = order
             });
             order++;
