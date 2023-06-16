@@ -37,7 +37,7 @@ public class CreateSession
         var sessionId = Guid.NewGuid();
         var requestNames = JsonSerializer.Deserialize<List<string>>(requestBody);
 
-        if (!requestNames?.Any() ?? false)
+        if (requestNames is null || !requestNames.Any())
         {
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
@@ -49,11 +49,17 @@ public class CreateSession
         }
 
         var nameEntities = new List<NameEntity>();
-        requestNames?.ForEach(n => nameEntities.Add(new NameEntity
+        var order = 0;
+        foreach (var name in requestNames)
         {
-            PartitionKey = sessionId.ToString(),
-            RowKey = n
-        }));
+            nameEntities.Add(new NameEntity
+            {
+                PartitionKey = sessionId.ToString(),
+                RowKey = name,
+                Order = order
+            });
+            order++;
+        }
         
         var addBatch = new List<TableTransactionAction>();
         addBatch.AddRange(nameEntities.Select(n => new TableTransactionAction(TableTransactionActionType.Add, n)));

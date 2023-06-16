@@ -24,11 +24,19 @@ public class GetNames
         var sessionName = req.Query["sessionName"];
 
         var pageableResults = _tableClient.QueryAsync<NameEntity>($"PartitionKey eq '{sessionName}'");
-        var names = new List<string>();
+        var names = new List<NameEntity>();
 
         await foreach (var page in pageableResults.AsPages())
         {
-            names.AddRange(page.Values.Select(name => name.RowKey));
+            foreach (var name in page.Values)
+            {
+                names.Add(new NameEntity()
+                {
+                    PartitionKey = name.PartitionKey,
+                    RowKey = name.RowKey,
+                    Order = name.Order
+                });
+            }
         }
 
         var response = req.CreateResponse(HttpStatusCode.OK);
