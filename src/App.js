@@ -7,7 +7,6 @@ function App() {
   const [wheelContents, setWheelContents] = useState();
 
   var goOnce = ""
-  let API_URL = `${window.location.origin}/api`
 
   function alertWinner(indicatedSegment) {
     alert("You have won " + indicatedSegment.text);
@@ -17,7 +16,7 @@ function App() {
     var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
     async function fetchData() {
-      await fetch(`${API_URL}/GetNames?sessionName=Session1`)
+      await fetch(`${window.location.origin}/api/GetNames?sessionName=Session1`)
         .then(async (ns) => {
           var names = await ns.json()
           var wheelContents = []
@@ -32,7 +31,7 @@ function App() {
         })
     }
     fetchData()
-  }, [goOnce, API_URL])
+  }, [goOnce])
   
   return <div className="App">
     <div className="thewheel" width="500" onClick={()=>theWheel.spin()}>
