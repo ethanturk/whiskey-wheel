@@ -22,7 +22,7 @@ function App() {
     var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
     async function fetchData() {
-      await getAllNames().then(async (ns) => {
+      await fetch(`${API_URL}/GetNames?sessionName=Session1`).then(async (ns) => {
         var names = await ns.json()
         var wheelContents = []
         var colorNumber = 0
