@@ -9,11 +9,6 @@ function App() {
   var goOnce = ""
   let API_URL = `${window.location.origin}/api`
 
-  function getAllNames() {
-    return fetch(`${API_URL}/GetNames?sessionName=Session1`)
-      //.then(result => { setNames(result) })
-  }
-
   function alertWinner(indicatedSegment) {
     alert("You have won " + indicatedSegment.text);
   }
@@ -22,21 +17,22 @@ function App() {
     var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
     async function fetchData() {
-      await getAllNames().then(async (ns) => {
-        var names = await ns.json()
-        var wheelContents = []
-        var colorNumber = 0
-        names.sort((a, b) => a.Order > b.Order ? 1 : -1)
-        for (var i = 0; i < names.length; i++) {
-          wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : names[i].RowKey})
-          if (colorNumber === 3) { colorNumber = 0 }
-          colorNumber++
-        };
-        setWheelContents(wheelContents)
-      })
+      await fetch(`${API_URL}/GetNames?sessionName=Session1`)
+        .then(async (ns) => {
+          var names = await ns.json()
+          var wheelContents = []
+          var colorNumber = 0
+          names.sort((a, b) => a.Order > b.Order ? 1 : -1)
+          for (var i = 0; i < names.length; i++) {
+            wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : names[i].RowKey})
+            if (colorNumber === 3) { colorNumber = 0 }
+            colorNumber++
+          };
+          setWheelContents(wheelContents)
+        })
     }
     fetchData()
-  }, [goOnce, API_URL, getAllNames])
+  }, [goOnce, API_URL])
   
   return <div className="App">
     <div className="thewheel" width="500" onClick={()=>theWheel.spin()}>
