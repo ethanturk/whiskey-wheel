@@ -22,7 +22,7 @@ function App() {
     var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
     async function fetchData() {
-      await fetch(`${API_URL}/GetNames?sessionName=Session1`).then(async (ns) => {
+      await getAllNames().then(async (ns) => {
         var names = await ns.json()
         var wheelContents = []
         var colorNumber = 0
@@ -36,7 +36,7 @@ function App() {
       })
     }
     fetchData()
-  }, [goOnce])
+  }, [goOnce, API_URL, getAllNames])
   
   return <div className="App">
     <div className="thewheel" width="500" onClick={()=>theWheel.spin()}>
