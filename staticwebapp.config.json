@@ -4,6 +4,6 @@
         "rewrite": "/index.html"
     },
     "platform": {
-        "apiRuntime": "dotnet-isolated:7.0"
+        "apiRuntime": "dotnet-isolated:6.0"
     }
 }

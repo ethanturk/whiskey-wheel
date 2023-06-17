@@ -55,6 +55,9 @@ function App() {
         ref={setTheWheel}
       ></Winwheel>
     </div>
+    <div>
+      <textarea name="names" rows={10} cols={40}></textarea>
+    </div>
   </div>;
 }
 
