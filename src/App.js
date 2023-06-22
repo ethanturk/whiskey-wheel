@@ -7,7 +7,6 @@ function App() {
   const [wheelContents, setWheelContents] = useState([])
   const [names, setNames] = useState('')
   const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
-  const goOnce = 0
 
   const handleNameChange = e => {
     populateWheel(e.target.value)
@@ -60,7 +59,7 @@ function App() {
         })
       }
     fetchData()
-  }, [goOnce, populateWheel])
+  }, [])
   
   return <div className="App container">
     <div className="row">
