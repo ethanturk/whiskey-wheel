@@ -5,41 +5,60 @@ import Winwheel from 'javascript-winwheel-react'
 function App() {
   const [theWheel, setTheWheel] = useState({})
   const [wheelContents, setWheelContents] = useState([])
-  const [names, setNames] = useState([])
+  const [names, setNames] = useState('')
   const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
-
-  var goOnce = ""
-
-  function alertWinner(indicatedSegment) {
-    alert("You have won " + indicatedSegment.text);
-  }
+  const goOnce = 0
 
   const handleNameChange = e => {
-    console.log(e.target.value)
-    setNames(mapNames(e.target.value))
+    populateWheel(e.target.value)
   }
 
-  function mapNames(value) {
-    return value?.map(n => { return `${n?.Name}` })
+  function alertWinner(indicatedSegment) {
+    alert("You have won " + indicatedSegment.text)
+  }
+
+  function randomizeNames() {
+    var nameArray = names.split('\n')
+    nameArray = shuffleArray(nameArray)
+    populateWheel(nameArray.join('\n'))
+  }
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = array[i]
+      array[i] = array[j]
+      array[j] = temp
+    }
+    return array
+  }
+
+  function populateWheel(wheelNameString) {
+    var colorNumber = 0
+    var splitNames = wheelNameString.split('\n')
+    if (splitNames?.length === 0 || splitNames[0] === '') { return }
+
+    var wheelNames = []
+    for (var i = 0; i < splitNames.length; i++) {
+      if (!splitNames[i]) { continue }
+      wheelNames.push({'fillStyle' : wheelColors[colorNumber], 'text' : splitNames[i]})
+      if (colorNumber === wheelColors.length-1) { colorNumber = 0 }
+      colorNumber++
+    }
+    
+    setNames(wheelNameString)
+    setWheelContents(wheelNames)
   }
 
   useEffect(() => {
-
     async function fetchData() {
       await fetch(`${window.location.origin}/api/GetNames?sessionName=Session1`)
         .then(async (ns) => {
-          var localNames = await ns.json()
-          var wheelContents = []
-          var colorNumber = 0
-          setNames(localNames.sort((a, b) => a.Order > b.Order ? 1 : -1).map(n => { return n.Name }))
-          for (var i = 0; i < localNames.length; i++) {
-            wheelContents.push({'fillStyle' : wheelColors[colorNumber], 'text' : localNames[i].RowKey})
-            if (colorNumber === wheelColors.length-1) { colorNumber = 0 }
-            colorNumber++
-          };
-          setWheelContents(wheelContents)
+          var localNames = await ns.text()
+          localNames = localNames.replaceAll('\\n','\n')
+          populateWheel(localNames)
         })
-    }
+      }
     fetchData()
   }, [goOnce])
   
@@ -80,8 +99,8 @@ function App() {
           />
         <br />
         <span>
-          <button className="form-control">Randomize</button>
-          <button className="form-control">Update</button>
+          <button className="form-control" onClick={randomizeNames}>Randomize</button>
+          <button className="form-control" onClick={populateWheel}>Update</button>
         </span>
       </div>
     </div>

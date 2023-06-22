@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Text.Json;
 using Azure.Data.Tables;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -24,26 +23,18 @@ public class GetNames
         var sessionName = req.Query["sessionName"];
 
         var pageableResults = _tableClient.QueryAsync<NameEntity>($"PartitionKey eq '{sessionName}'");
-        var names = new List<NameEntity>();
+        var names = string.Empty;
 
         await foreach (var page in pageableResults.AsPages())
         {
             foreach (var name in page.Values)
             {
-                names.Add(new NameEntity()
-                {
-                    PartitionKey = name.PartitionKey,
-                    RowKey = name.Name,
-                    Name = name.Name,
-                    Order = name.Order
-                });
+                names = name.Names;
             }
         }
 
         var response = req.CreateResponse(HttpStatusCode.OK);
-        response.Headers.Add("Content-Type", "application/json; charset=utf-8");
-
-        await response.WriteStringAsync(JsonSerializer.Serialize(names));
+        await response.WriteStringAsync(names);
 
         return response;
     }

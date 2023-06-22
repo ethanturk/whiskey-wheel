@@ -35,9 +35,8 @@ public class CreateSession
         }
 
         var sessionId = Guid.NewGuid();
-        var requestNames = JsonSerializer.Deserialize<List<string>>(requestBody);
 
-        if (requestNames is null || !requestNames.Any())
+        if (string.IsNullOrEmpty(requestBody))
         {
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
@@ -48,31 +47,19 @@ public class CreateSession
             page.Values.ToImmutableList().ForEach(name => _tableClient.DeleteEntity(name.PartitionKey, name.RowKey));
         }
 
-        var nameEntities = new List<NameEntity>();
-        var order = 0;
-        foreach (var name in requestNames)
+        var response =  await _tableClient.AddEntityAsync<NameEntity>(new NameEntity
         {
-            nameEntities.Add(new NameEntity
-            {
-                PartitionKey = sessionId.ToString(),
-                RowKey = Guid.NewGuid().ToString(),
-                Name = name,
-                Order = order
-            });
-            order++;
-        }
+            PartitionKey = sessionId.ToString(),
+            RowKey = Guid.NewGuid().ToString(),
+            Names = requestBody,
+        });
         
-        var addBatch = new List<TableTransactionAction>();
-        addBatch.AddRange(nameEntities.Select(n => new TableTransactionAction(TableTransactionActionType.Add, n)));
-        var batchResponse = await _tableClient.SubmitTransactionAsync(addBatch);
-
-        if (!batchResponse.HasValue)
+        if (!response.Status.Equals(200))
         {
             return req.CreateResponse(HttpStatusCode.InternalServerError);
         }
         
-        var wasSuccessful = batchResponse.Value.ToImmutableList().Any(r => r.Status != 200);
-        var responseCode = wasSuccessful ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+        var responseCode = response.Status == 200 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
 
         return req.CreateResponse(responseCode);
     }
