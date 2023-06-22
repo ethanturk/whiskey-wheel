@@ -52,7 +52,9 @@ function App() {
   /* eslint-disable */
   useEffect(() => {
     async function fetchData() {
-      await fetch(`${window.location.origin}/api/GetNames?sessionName=Session1`)
+      const queryParams = new URLSearchParams(window.location.search)
+      const term = queryParams.get("session")
+      await fetch(`${window.location.origin}/api/GetNames?sessionName=${term}`)
         .then(async (ns) => {
           var localNames = await ns.text()
           localNames = localNames.replaceAll('\\n','\n')
