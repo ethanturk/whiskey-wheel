@@ -49,6 +49,7 @@ function App() {
     setWheelContents(wheelNames)
   }
 
+  /* eslint-disable */
   useEffect(() => {
     async function fetchData() {
       await fetch(`${window.location.origin}/api/GetNames?sessionName=Session1`)
@@ -60,6 +61,7 @@ function App() {
       }
     fetchData()
   }, [])
+  /* eslint-disable */
   
   return <div className="App container">
     <div className="row">
