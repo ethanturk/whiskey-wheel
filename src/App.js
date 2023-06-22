@@ -13,13 +13,25 @@ function App() {
   }
 
   function alertWinner(indicatedSegment) {
-    alert("You have won " + indicatedSegment.text)
+    var nameArray = names.split('\n')
+    for (var i = 0; i < nameArray.length; i++) {
+      if (nameArray[i] === indicatedSegment.text) {
+        nameArray.splice(i, 1)
+        break
+      }
+    }
+    var newOrder = nameArray.join('\n')
+    setNames(newOrder)
+    populateWheel(newOrder)
+    alert("WINNER IS " + indicatedSegment.text)
   }
 
   function randomizeNames() {
     var nameArray = names.split('\n')
     nameArray = shuffleArray(nameArray)
-    populateWheel(nameArray.join('\n'))
+    var newOrder = nameArray.join('\n')
+    setNames(newOrder)
+    populateWheel(newOrder)
   }
 
   function shuffleArray(array) {

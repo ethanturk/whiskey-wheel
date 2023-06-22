@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Azure;
 using Azure.Data.Tables;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -44,27 +45,34 @@ public class UpdateNames
         {
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
-        if (string.IsNullOrEmpty(nameEntity.PartitionKey))
-        {
-            nameEntity.PartitionKey = sessionId.ToString();
-            nameEntity.RowKey = sessionId.ToString();
-        }
-        
-        /*var pageableResults = _tableClient.QueryAsync<NameEntity>($"PartitionKey eq '{sessionId}'");
-        await foreach (var page in pageableResults.AsPages())
-        {
-            page.Values.ToImmutableList().ForEach(name => _tableClient.DeleteEntity(name.PartitionKey, name.RowKey));
-        }*/
 
-        var response =  await _tableClient.AddEntityAsync<NameEntity>(nameEntity);
-        
-        if (response.Status >= 300)
+        try
         {
-            return req.CreateResponse(HttpStatusCode.InternalServerError);
-        }
-        
-        var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+            Response response;
+            
+            if (string.IsNullOrEmpty(nameEntity.PartitionKey))
+            {
+                nameEntity.PartitionKey = sessionId.ToString();
+                nameEntity.RowKey = sessionId.ToString();
 
-        return req.CreateResponse(responseCode);
+                response =  await _tableClient.AddEntityAsync<NameEntity>(nameEntity);
+            }
+            else
+            {
+                response = await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
+            }
+        
+            if (response.Status >= 300)
+            {
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+            return req.CreateResponse(responseCode);
+        }
+        catch (System.Exception ex)
+        {
+            throw;
+        }
     }
 }
