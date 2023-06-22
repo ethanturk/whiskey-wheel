@@ -3,8 +3,10 @@ import { useState, useEffect  } from "react";
 import Winwheel from 'javascript-winwheel-react'
 
 function App() {
-  const [theWheel, setTheWheel] = useState();
-  const [wheelContents, setWheelContents] = useState();
+  const [theWheel, setTheWheel] = useState({})
+  const [wheelContents, setWheelContents] = useState([])
+  const [names, setNames] = useState([])
+  const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
   var goOnce = ""
 
@@ -12,19 +14,27 @@ function App() {
     alert("You have won " + indicatedSegment.text);
   }
 
+  const handleNameChange = e => {
+    console.log(e.target.value)
+    setNames(mapNames(e.target.value))
+  }
+
+  function mapNames(value) {
+    return value?.map(n => { return `${n?.Name}` })
+  }
+
   useEffect(() => {
-    var colors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
     async function fetchData() {
       await fetch(`${window.location.origin}/api/GetNames?sessionName=Session1`)
         .then(async (ns) => {
-          var names = await ns.json()
+          var localNames = await ns.json()
           var wheelContents = []
           var colorNumber = 0
-          names.sort((a, b) => a.Order > b.Order ? 1 : -1)
-          for (var i = 0; i < names.length; i++) {
-            wheelContents.push({'fillStyle' : colors[colorNumber], 'text' : names[i].RowKey})
-            if (colorNumber === 3) { colorNumber = 0 }
+          setNames(localNames.sort((a, b) => a.Order > b.Order ? 1 : -1).map(n => { return n.Name }))
+          for (var i = 0; i < localNames.length; i++) {
+            wheelContents.push({'fillStyle' : wheelColors[colorNumber], 'text' : localNames[i].RowKey})
+            if (colorNumber === wheelColors.length-1) { colorNumber = 0 }
             colorNumber++
           };
           setWheelContents(wheelContents)
@@ -33,8 +43,8 @@ function App() {
     fetchData()
   }, [goOnce])
   
-  return <div className="App" class="container">
-    <div class="row">
+  return <div className="App container">
+    <div className="row">
       <div className="thewheel col" onClick={()=>theWheel.spin()}>
         <Winwheel 
           width='440'
@@ -57,17 +67,25 @@ function App() {
           ref={setTheWheel}
         ></Winwheel>
       </div>
-      <div class="col">
+      <div className="col">
         <br />
-        <textarea title="Names" placeholder="Names" name="names" class="form-control align-middle" rows={16}></textarea>
+        <textarea 
+          title="Names" 
+          placeholder="Names" 
+          name="namesBox" 
+          className="form-control align-middle" 
+          rows={16}
+          value={names}
+          onChange={handleNameChange} 
+          />
         <br />
         <span>
-          <button class="form-control">Randomize</button>
-          <button class="form-control">Update</button>
+          <button className="form-control">Randomize</button>
+          <button className="form-control">Update</button>
         </span>
       </div>
     </div>
-    <div class="row">
+    <div className="row">
     </div>
   </div>;
 }
