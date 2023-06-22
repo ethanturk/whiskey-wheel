@@ -49,12 +49,27 @@ function App() {
     setWheelContents(wheelNames)
   }
 
+  async function updateNames() {
+    var sessionName = getSessionName()
+    await fetch(`${window.location.origin}/api/UpdateNames`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({names: names, partitionKey: sessionName, rowKey: sessionName})
+    })
+  }
+
+  function getSessionName() {
+    const queryParams = new URLSearchParams(window.location.search)
+    return queryParams.get("session")
+  }
+
   /* eslint-disable */
   useEffect(() => {
     async function fetchData() {
-      const queryParams = new URLSearchParams(window.location.search)
-      const term = queryParams.get("session")
-      await fetch(`${window.location.origin}/api/GetNames?sessionName=${term}`)
+      var sessionName = getSessionName()
+      await fetch(`${window.location.origin}/api/GetNames?sessionName=${sessionName}`)
         .then(async (ns) => {
           var localNames = await ns.text()
           localNames = localNames.replaceAll('\\n','\n')
@@ -103,7 +118,7 @@ function App() {
         <br />
         <span>
           <button className="form-control" onClick={randomizeNames}>Randomize</button>
-          <button className="form-control" onClick={populateWheel}>Update</button>
+          <button className="form-control" onClick={updateNames}>Update</button>
         </span>
       </div>
     </div>
