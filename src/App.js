@@ -60,7 +60,7 @@ function App() {
         })
       }
     fetchData()
-  }, [goOnce])
+  }, [goOnce, populateWheel])
   
   return <div className="App container">
     <div className="row">
