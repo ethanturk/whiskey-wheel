@@ -1,11 +1,15 @@
 import React from 'react';
 import { useState, useEffect  } from "react";
 import Winwheel from 'javascript-winwheel-react'
+import { Modal, Button } from 'react-bootstrap'
 
 function App() {
   const [theWheel, setTheWheel] = useState({})
   const [wheelContents, setWheelContents] = useState([])
+  const [wheelReadyToSpin, setWheelReadyToSpin] = useState(true)
   const [names, setNames] = useState('')
+  const [winner, setWinner] = useState('')
+  const [show, setShow] = useState(false)
   const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
 
   const handleNameChange = e => {
@@ -13,9 +17,29 @@ function App() {
   }
 
   function alertWinner(indicatedSegment) {
+    if (!wheelReadyToSpin && indicatedSegment.text.length > 0) {
+      setWinner(indicatedSegment.text)
+      setShow(true)
+    }
+  }
+
+  function spinWheel(override) {
+    console.log(wheelReadyToSpin)
+    if (wheelReadyToSpin || override === true) {
+      theWheel.spin()
+      setWheelReadyToSpin(false)
+    }
+  }
+
+  function closeOnly() {
+    setShow(false)
+    setWheelReadyToSpin(true)
+  }
+
+  async function removeName() {
     var nameArray = names.split('\n')
     for (var i = 0; i < nameArray.length; i++) {
-      if (nameArray[i] === indicatedSegment.text) {
+      if (nameArray[i] === winner) {
         nameArray.splice(i, 1)
         break
       }
@@ -23,7 +47,20 @@ function App() {
     var newOrder = nameArray.join('\n')
     setNames(newOrder)
     populateWheel(newOrder)
-    alert("WINNER IS " + indicatedSegment.text)
+  }
+
+  async function closeAndRemove() {
+    await removeName()
+    setShow(false)
+    setWheelReadyToSpin(true)
+  }
+
+  async function closeAndRemoveAndSpin() {
+    removeName().then(() => {
+      setShow(false)
+      setWheelReadyToSpin(true)
+      spinWheel(true)
+    })
   }
 
   function randomizeNames() {
@@ -94,7 +131,7 @@ function App() {
   
   return <div className="App container">
     <div className="row">
-      <div className="thewheel col" onClick={()=>theWheel.spin()}>
+      <div className="thewheel col" onClick={spinWheel}>
         <Winwheel 
           width='440'
           height='500'
@@ -107,11 +144,6 @@ function App() {
               'duration' : 8,
               'spins'    : 10,
               'callbackFinished': alertWinner
-          }}
-          pins={{
-            'number'     : 24,
-            'fillStyle'  : 'silver',
-            'outerRadius': 4,
           }}
           ref={setTheWheel}
         ></Winwheel>
@@ -136,6 +168,23 @@ function App() {
     </div>
     <div className="row">
     </div>
+    <Modal show={show} onHide={closeOnly}>
+      <Modal.Header closeButton>
+        <Modal.Title>Winner</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Winner is {winner}!</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={closeOnly}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={closeAndRemove}>
+          Remove Entry
+        </Button>
+        <Button variant="primary" onClick={closeAndRemoveAndSpin}>
+          Remove Entry and Spin Again
+        </Button>
+      </Modal.Footer>
+    </Modal>
   </div>;
 }
 
