@@ -26,6 +26,7 @@ public class UpdateNames
         FunctionContext executionContext)
     {
         var logger = executionContext.GetLogger("UpdateNames");
+        var sessionName = req.Query["sessionName"];
         
         string requestBody;
         using (var streamReader =  new StreamReader(req.Body))
@@ -33,9 +34,9 @@ public class UpdateNames
             requestBody = await streamReader.ReadToEndAsync();
         }
 
-        var sessionId = Guid.NewGuid();
+        var sessionId = string.IsNullOrEmpty(sessionName) ? Guid.NewGuid().ToString() : sessionName;
 
-        var options = new JsonSerializerOptions()
+        var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
@@ -46,33 +47,21 @@ public class UpdateNames
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
 
-        try
-        {
-            Response response;
-            
-            if (string.IsNullOrEmpty(nameEntity.PartitionKey))
-            {
-                nameEntity.PartitionKey = sessionId.ToString();
-                nameEntity.RowKey = sessionId.ToString();
-
-                response =  await _tableClient.AddEntityAsync<NameEntity>(nameEntity);
-            }
-            else
-            {
-                response = await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
-            }
+        Response response;
         
-            if (response.Status >= 300)
-            {
-                return req.CreateResponse(HttpStatusCode.InternalServerError);
-            }
-
-            var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
-            return req.CreateResponse(responseCode);
-        }
-        catch (System.Exception ex)
+        if (string.IsNullOrEmpty(nameEntity.PartitionKey))
         {
-            throw;
+            nameEntity.PartitionKey = sessionId;
+            nameEntity.RowKey = sessionId;
+
+            response =  await _tableClient.AddEntityAsync<NameEntity>(nameEntity);
         }
-    }
+        else
+        {
+            response = await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
+        }
+
+        var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
+        return req.CreateResponse(responseCode);
+        }
 }
