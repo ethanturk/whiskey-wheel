@@ -128,7 +128,7 @@ function App() {
     const queryParams = new URLSearchParams(window.location.search)
     var sessionId = queryParams.get("session")
     if (!sessionId || sessionId === '') { return }
-    setSessionName(queryParams.get("session"))
+    setSessionName(sessionId)
   }
 
   /* eslint-disable */
