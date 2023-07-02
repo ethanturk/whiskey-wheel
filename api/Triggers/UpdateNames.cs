@@ -53,10 +53,7 @@ public class UpdateNames
             nameEntity.RowKey = sessionId;
         }
 
-        var response = string.IsNullOrEmpty(nameEntity.PartitionKey)
-            ? await _tableClient.AddEntityAsync<NameEntity>(nameEntity)
-            : await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
-
+        var response = await _tableClient.UpsertEntityAsync(nameEntity, TableUpdateMode.Replace);
         var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
         return req.CreateResponse(responseCode);
         }
