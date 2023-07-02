@@ -148,8 +148,8 @@ function App() {
   
   return <Container>
     <Row className='align-items-center'>
-      <Col className="thewheel col-sm-8">
-        <div style={{width: 550}} onClick={spinWheel}>
+      <Col className="thewheel col-sm-12 col-md-12 col-lg-8">
+        <div className="d-flex align-items-center" onClick={spinWheel}>
           <Winwheel
             width='550'
             height='600'
@@ -185,7 +185,7 @@ function App() {
           </div>
         </div>
       </Col>
-      <Col className="thewheel col-sm-4">
+      <Col className="thewheel col-sm-12 col-md-12 col-lg-4">
         <Row>
           <textarea 
             title="Names" 
@@ -196,14 +196,14 @@ function App() {
             value={names}
             onChange={handleNameChange} 
             />
-          <Col className="col-sm-2"></Col>
-          <Col className="col-sm-8">
+          <Col className="col-lg-2 col-md-0 col-sm-0"></Col>
+          <Col className="col-lg-8 col-md-12 col-sm-12">
             <br />
             <button className="form-control btn btn-dark" onClick={spinWheel}>Spin the Wheel</button>
             <button className="form-control btn btn-dark" onClick={randomizeNames}>Randomize List</button>
             <button className="form-control btn btn-dark" onClick={updateNames}>Save List</button>
           </Col>
-          <Col className="col-sm-2"></Col>
+          <Col className="col-lg-2 col-md-0 col-sm-0"></Col>
         </Row>
       </Col>
     </Row>
