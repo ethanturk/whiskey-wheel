@@ -46,20 +46,16 @@ public class UpdateNames
         {
             return req.CreateResponse(HttpStatusCode.BadRequest);
         }
-
-        Response response;
         
         if (string.IsNullOrEmpty(nameEntity.PartitionKey))
         {
             nameEntity.PartitionKey = sessionId;
             nameEntity.RowKey = sessionId;
+        }
 
-            response =  await _tableClient.AddEntityAsync<NameEntity>(nameEntity);
-        }
-        else
-        {
-            response = await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
-        }
+        var response = string.IsNullOrEmpty(nameEntity.PartitionKey)
+            ? await _tableClient.AddEntityAsync<NameEntity>(nameEntity)
+            : await _tableClient.UpdateEntityAsync<NameEntity>(nameEntity, ETag.All);
 
         var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
         return req.CreateResponse(responseCode);

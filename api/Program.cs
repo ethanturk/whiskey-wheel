@@ -14,6 +14,8 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices((builder, services) =>
     {
+        services.AddApplicationInsightsTelemetryWorkerService();
+        
         var connString = builder.Configuration["StorageConnectionString"];
         var tableServiceClient = new TableServiceClient(connString);
         
