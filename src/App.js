@@ -17,6 +17,7 @@ function App() {
   const handleNameChange = async e => {
     await populateWheel(e.target.value)
   }
+
   const handleSessionNameChange = async e => {
     setSessionName(e.target.value)
   }
@@ -117,11 +118,16 @@ function App() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({names: names, partitionKey: sessionName, rowKey: sessionName})
+    }).then(async (response) => {
+      var responseText = await response.text()
+      setSessionName(responseText)
     })
   }
 
   function getSessionNameFromQuery() {
     const queryParams = new URLSearchParams(window.location.search)
+    var sessionId = queryParams.get("session")
+    if (!sessionId || sessionId == '') { return }
     setSessionName(queryParams.get("session"))
   }
 

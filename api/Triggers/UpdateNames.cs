@@ -55,6 +55,8 @@ public class UpdateNames
 
         var response = await _tableClient.UpsertEntityAsync(nameEntity, TableUpdateMode.Replace);
         var responseCode = response.Status < 300 ? HttpStatusCode.OK : HttpStatusCode.BadRequest;
-        return req.CreateResponse(responseCode);
-        }
+        var responseObj = req.CreateResponse(responseCode);
+        await responseObj.WriteStringAsync(nameEntity.PartitionKey);
+        return responseObj;
+    }
 }
