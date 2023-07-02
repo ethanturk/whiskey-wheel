@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect  } from "react";
 import Winwheel from 'javascript-winwheel-react'
-import { Modal, Button } from 'react-bootstrap'
+import { Modal, Button, Container, Row, Col } from 'react-bootstrap'
 
 function App() {
   const [theWheel, setTheWheel] = useState({})
@@ -12,10 +12,13 @@ function App() {
   const [sessionName, setSessionName] = useState('')
   const [show, setShow] = useState(false)
   const [clipboardIndicator, setClipboardIndicator] = useState({})
-  const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f"]
+  const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"]
 
-  const handleNameChange = e => {
-    populateWheel(e.target.value)
+  const handleNameChange = async e => {
+    await populateWheel(e.target.value)
+  }
+  const handleSessionNameChange = async e => {
+    setSessionName(e.target.value)
   }
 
   const copySessionInfo = async e => {
@@ -55,7 +58,7 @@ function App() {
     }
     var newOrder = nameArray.join('\n')
     setNames(newOrder)
-    populateWheel(newOrder)
+    await populateWheel(newOrder)
   }
 
   async function closeAndRemove() {
@@ -72,12 +75,12 @@ function App() {
     })
   }
 
-  function randomizeNames() {
+  async function randomizeNames() {
     var nameArray = names.split('\n')
     nameArray = shuffleArray(nameArray)
     var newOrder = nameArray.join('\n')
     setNames(newOrder)
-    populateWheel(newOrder)
+    await populateWheel(newOrder)
   }
 
   function shuffleArray(array) {
@@ -90,7 +93,7 @@ function App() {
     return array
   }
 
-  function populateWheel(wheelNameString) {
+  async function populateWheel(wheelNameString) {
     var colorNumber = 0
     var splitNames = wheelNameString.split('\n')
     if (splitNames?.length === 0 || splitNames[0] === '') { return }
@@ -108,7 +111,6 @@ function App() {
   }
 
   async function updateNames() {
-    getSessionName()
     await fetch(`${window.location.origin}/api/UpdateNames`, {
       method: 'POST',
       headers: {
@@ -118,35 +120,34 @@ function App() {
     })
   }
 
-  function getSessionName() {
+  function getSessionNameFromQuery() {
     const queryParams = new URLSearchParams(window.location.search)
     setSessionName(queryParams.get("session"))
   }
 
   /* eslint-disable */
   useEffect(() => {
-    getSessionName()
+    if (!sessionName || sessionName == '') { getSessionNameFromQuery() }
     async function fetchData() {
       await fetch(`${window.location.origin}/api/GetNames?sessionName=${sessionName}`)
         .then(async (ns) => {
           var localNames = await ns.text()
           localNames = localNames.replaceAll('\\n','\n')
-          populateWheel(localNames)
+          await populateWheel(localNames)
         })
       }
     fetchData()
   }, [sessionName])
   /* eslint-disable */
   
-  return <div className="App container">
-    <div className="row">
-      <div className="thewheel col">
-        <div onClick={spinWheel}>
+  return <Container>
+    <Row className='align-items-center'>
+      <Col className="thewheel col-sm-8">
+        <div style={{width: 550}} onClick={spinWheel}>
           <Winwheel
-            width='440'
-            height='500'
-            class='column'
-            outerRadius='212'
+            width='550'
+            height='600'
+            outerRadius='257'
             innerRadius='75'
             segments={wheelContents}
             animation={{
@@ -159,16 +160,16 @@ function App() {
           ></Winwheel>
         </div>
         <br />
-        <label class="text-light">Session Name</label>
+        <label className="text-light">Session Name: </label>
         <div className="input-group mb-3">
           <input 
             type="text"
-            readOnly={true}
             label="Session Name"
             className="form-control bg-dark bg-gradient text-light" 
-            value={`${window.location.origin}?session=${sessionName}`}
-            onChange={setSessionName}
-            onClick={copySessionInfo} />
+            title="Session Name"
+            value={sessionName}
+            onChange={handleSessionNameChange} />
+          <button className="form-control btn btn-dark" onClick={copySessionInfo}>Copy Link</button>
           <div className="input-group-append">
             <span 
               className="input-group-text" 
@@ -177,46 +178,48 @@ function App() {
               </span>
           </div>
         </div>
-      </div>
-      <div className="col">
-        <br />
-        <textarea 
-          title="Names" 
-          placeholder="Names" 
-          name="namesBox" 
-          className="form-control align-middle bg-dark bg-gradient text-light" 
-          rows={16}
-          value={names}
-          onChange={handleNameChange} 
-          />
-        <br />
-        <span>
-          <button className="form-control btn btn-dark" onClick={spinWheel}>Spin the Wheel</button>
-          <button className="form-control btn btn-dark" onClick={randomizeNames}>Randomize</button>
-          <button className="form-control btn btn-dark" onClick={updateNames}>Update</button>
-        </span>
-      </div>
-    </div>
-    <div className="row">
-    </div>
+      </Col>
+      <Col className="thewheel col-sm-4">
+        <Row>
+          <textarea 
+            title="Names" 
+            placeholder="Names" 
+            name="namesBox" 
+            className="form-control align-middle bg-dark bg-gradient text-light" 
+            rows={16}
+            value={names}
+            onChange={handleNameChange} 
+            />
+          <Col className="col-sm-2"></Col>
+          <Col className="col-sm-8">
+            <br />
+            <button className="form-control btn btn-dark" onClick={spinWheel}>Spin the Wheel</button>
+            <button className="form-control btn btn-dark" onClick={randomizeNames}>Randomize List</button>
+            <button className="form-control btn btn-dark" onClick={updateNames}>Save List</button>
+          </Col>
+          <Col className="col-sm-2"></Col>
+        </Row>
+      </Col>
+    </Row>
+    <Row></Row>
     <Modal show={show} onHide={closeOnly}>
       <Modal.Header closeButton>
         <Modal.Title>Winner</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Winner is {winner}!</Modal.Body>
+      <Modal.Body>Congratulations, {winner}!</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={closeOnly}>
-          Close
-        </Button>
         <Button variant="primary" onClick={closeAndRemove}>
           Remove Entry
         </Button>
         <Button variant="primary" onClick={closeAndRemoveAndSpin}>
           Remove Entry and Spin Again
         </Button>
+        <Button variant="secondary" onClick={closeOnly}>
+          Close
+        </Button>
       </Modal.Footer>
     </Modal>
-  </div>;
+  </Container>;
 }
 
 export default App;
