@@ -31,7 +31,7 @@ function App() {
   }
 
   function alertWinner(indicatedSegment) {
-    if (!wheelReadyToSpin && indicatedSegment.text.length > 0) {
+    if (!wheelReadyToSpin && indicatedSegment?.text.length > 0) {
       setWinner(indicatedSegment.text)
       setShow(true)
     }
@@ -102,7 +102,8 @@ function App() {
     var wheelNames = []
     for (var i = 0; i < splitNames.length; i++) {
       if (!splitNames[i]) { continue }
-      wheelNames.push({'fillStyle' : wheelColors[colorNumber], 'text' : splitNames[i]})
+      var fontSize = splitNames[i].length >= 14 ? 12 : 18;
+      wheelNames.push({'fillStyle' : wheelColors[colorNumber], 'text' : splitNames[i], 'textFontSize': fontSize})
       if (colorNumber === wheelColors.length-1) { colorNumber = 0 }
       colorNumber++
     }
@@ -146,7 +147,7 @@ function App() {
   }, [sessionName])
   /* eslint-disable */
   
-  return <Container>
+  return <Container fluid>
     <Row className='align-items-center'>
       <Col className="thewheel col-sm-12 col-md-12 col-lg-8">
         <div className="mx-auto" onClick={spinWheel}>
@@ -157,9 +158,10 @@ function App() {
             outerRadius='257'
             innerRadius='75'
             segments={wheelContents}
+            textalignment='center'
             animation={{
                 'type'     : 'spinToStop',
-                'duration' : 8,
+                'duration' : 6,
                 'spins'    : 10,
                 'callbackFinished': alertWinner
             }}
@@ -186,7 +188,18 @@ function App() {
           </div>
         </div>
       </Col>
-      <Col width="550" className="col-sm-12 col-md-12 col-lg-4">
+      <Col lg={4} sm={12} md={12}>
+        <Row className="justify-content-md-center">
+          <Col lg={4} md={12} sm={12}>
+            <button className="form-control btn btn-dark mb-2" onClick={spinWheel}>Spin</button>
+          </Col>
+          <Col lg={4} md={12} sm={12}>
+            <button className="form-control btn btn-dark mb-2" onClick={randomizeNames}>Randomize</button>
+          </Col>
+          <Col lg={4} md={12} sm={12}>
+            <button className="form-control btn btn-dark mb-2" onClick={updateNames}>Save</button>
+          </Col>
+        </Row>
         <Row>
           <textarea 
             title="Names" 
@@ -197,12 +210,6 @@ function App() {
             value={names}
             onChange={handleNameChange} 
             />
-          <Col className="col-lg-8 col-md-12 col-sm-12">
-            <br />
-            <button className="form-control btn btn-dark offset-lg-3" onClick={spinWheel}>Spin the Wheel</button>
-            <button className="form-control btn btn-dark offset-lg-3" onClick={randomizeNames}>Randomize List</button>
-            <button className="form-control btn btn-dark offset-lg-3" onClick={updateNames}>Save List</button>
-          </Col>
         </Row>
       </Col>
     </Row>
