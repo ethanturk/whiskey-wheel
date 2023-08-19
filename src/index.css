@@ -1,8 +1,19 @@
-canvas
+#winwheel .canvas-bg-dd
 {
-    background-image: url(./img/wheel_back_empty.png);
-    background-position: center;
-    background-repeat: none;
+    background: url(./img/dd.png) no-repeat center/200px 200px, 
+                url(./img/wheel_back_empty.png) center no-repeat;
+}
+
+#winwheel .canvas-bg-hawf
+{
+    background: url(./img/hawf.png) no-repeat center/200px 200px, 
+                url(./img/wheel_back_empty.png) center no-repeat;
+}
+
+#winwheel .canvas-bg-dustydan
+{
+    background: url(./img/dustydan.png) no-repeat center/110px 110px, 
+                url(./img/wheel_back_empty.png) center no-repeat;
 }
 
 .green

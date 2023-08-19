@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect  } from "react";
+import { useState, useEffect, React} from 'react';
 import Winwheel from 'javascript-winwheel-react'
 import { Modal, Button, Container, Row, Col } from 'react-bootstrap'
 
@@ -10,6 +9,7 @@ function App() {
   const [names, setNames] = useState('')
   const [winner, setWinner] = useState('')
   const [sessionName, setSessionName] = useState('')
+  const [bgName, setBgName] = useState('')
   const [show, setShow] = useState(false)
   const [clipboardIndicator, setClipboardIndicator] = useState({})
   const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"]
@@ -94,6 +94,32 @@ function App() {
     return array
   }
 
+  function changeBackgroundEvent(e) {
+    changeBackground(e.target.value)
+  }
+
+  function changeBackground(name) {
+    var bgName = ''
+
+    switch (name) {
+      case 'HAWF':
+        bgName = 'canvas-bg-hawf'
+        break;
+      case 'DustyDan':
+        bgName = 'canvas-bg-dustydan'
+        break;
+      case 'DD':
+        bgName = 'canvas-bg-dd'
+        break;
+      default:
+        bgName = localStorage.getItem('bgName')
+        break;
+    }
+
+    setBgName(bgName)
+    localStorage.setItem('bgName', name)
+  }
+
   async function populateWheel(wheelNameString) {
     var colorNumber = 0
     var splitNames = wheelNameString.split('\n')
@@ -144,17 +170,18 @@ function App() {
         })
       }
     fetchData()
+    changeBackground(localStorage.getItem('bgName'))
   }, [sessionName])
   /* eslint-disable */
   
   return <Container fluid>
     <Row className='align-items-center'>
       <Col className="thewheel col-sm-12 col-md-12 col-lg-8">
-        <div className="mx-auto" onClick={spinWheel}>
+        <div id="winwheel" className="mx-auto" onClick={spinWheel}>
           <Winwheel
             width='550'
             height='600'
-            className="offset-lg-2"
+            className={`offset-lg-2 ${bgName}`}
             outerRadius='257'
             innerRadius='75'
             segments={wheelContents}
@@ -166,6 +193,7 @@ function App() {
                 'callbackFinished': alertWinner
             }}
             ref={setTheWheel}
+            style={{backgroundImage: `url(${bgName})`}}
           ></Winwheel>
         </div>
         <br />
@@ -198,6 +226,15 @@ function App() {
           </Col>
           <Col lg={4} md={12} sm={12}>
             <button className="form-control btn btn-dark mb-2" onClick={updateNames}>Save</button>
+          </Col>
+        </Row>
+        <Row style={{ marginBottom: 10 }}>
+          <Col className="padding-2">
+            <select className="form-control bg-dark bg-gradient text-light" onChange={changeBackgroundEvent}>
+              <option value="DD" selected={bgName == 'canvas-bg-dd'}>Drifting Drams</option>
+              <option value="DustyDan" selected={bgName == 'canvas-bg-dustydan'}>Dusty Dan</option>
+              <option value="HAWF" selected={bgName == 'canvas-bg-hawf'}>Hello Again Whiskey Friends</option>
+            </select>
           </Col>
         </Row>
         <Row>
