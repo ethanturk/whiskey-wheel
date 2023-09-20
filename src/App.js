@@ -128,7 +128,15 @@ function App() {
     var wheelNames = []
     for (var i = 0; i < splitNames.length; i++) {
       if (!splitNames[i]) { continue }
-      var fontSize = splitNames[i].length >= 14 ? 12 : 18;
+      var fontSize = 18
+      if (splitNames.length >= 30)
+      {
+        fontSize = 8
+      }
+      else if (splitNames.length >= 14)
+      {
+        fontSize = 12
+      }
       wheelNames.push({'fillStyle' : wheelColors[colorNumber], 'text' : splitNames[i], 'textFontSize': fontSize})
       if (colorNumber === wheelColors.length-1) { colorNumber = 0 }
       colorNumber++
@@ -179,11 +187,11 @@ function App() {
       <Col className="thewheel col-sm-12 col-md-12 col-lg-8">
         <div id="winwheel" className="mx-auto" onClick={spinWheel}>
           <Winwheel
-            width='550'
-            height='600'
+            width='800'
+            height='900'
             className={`offset-lg-2 ${bgName}`}
-            outerRadius='257'
-            innerRadius='75'
+            outerRadius='400'
+            innerRadius='200'
             segments={wheelContents}
             textalignment='center'
             animation={{

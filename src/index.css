@@ -1,19 +1,19 @@
 #winwheel .canvas-bg-dd
 {
-    background: url(./img/dd.png) no-repeat center/200px 200px, 
-                url(./img/wheel_back_empty.png) center no-repeat;
+    background: url(./img/dd.png) no-repeat center/300px 300px, 
+                url(./img/wheel_back_empty.png) no-repeat center/920px 1090px;
 }
 
 #winwheel .canvas-bg-hawf
 {
-    background: url(./img/hawf.png) no-repeat center/200px 200px, 
-                url(./img/wheel_back_empty.png) center no-repeat;
+    background: url(./img/hawf.png) no-repeat center/500px 500px, 
+                url(./img/wheel_back_empty.png) no-repeat center/920px 1085px;
 }
 
 #winwheel .canvas-bg-dustydan
 {
-    background: url(./img/dustydan.png) no-repeat center/110px 110px, 
-                url(./img/wheel_back_empty.png) center no-repeat;
+    background: url(./img/dustydan.png) no-repeat center/260px 260px, 
+                url(./img/wheel_back_empty.png) no-repeat center/920px 1090px;
 }
 
 .green
