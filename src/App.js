@@ -184,7 +184,7 @@ function App() {
   
   return <Container fluid>
     <Row className='align-items-center'>
-      <Col className="thewheel col-sm-12 col-md-12 col-lg-8">
+      <Col className="thewheel col-sm-12 col-md-12 col-lg-9">
         <div id="winwheel" className="mx-auto" onClick={spinWheel}>
           <Winwheel
             width='800'
@@ -224,16 +224,16 @@ function App() {
           </div>
         </div>
       </Col>
-      <Col lg={4} sm={12} md={12}>
+      <Col lg={3} sm={12} md={12}>
         <Row className="justify-content-md-center">
           <Col lg={4} md={12} sm={12}>
-            <button className="form-control btn btn-dark mb-2" onClick={spinWheel}>Spin</button>
+            <button className="form-control btn btn-dark" onClick={spinWheel}>Spin</button>
           </Col>
           <Col lg={4} md={12} sm={12}>
-            <button className="form-control btn btn-dark mb-2" onClick={randomizeNames}>Randomize</button>
+            <button className="form-control btn btn-dark" onClick={randomizeNames}>Random</button>
           </Col>
           <Col lg={4} md={12} sm={12}>
-            <button className="form-control btn btn-dark mb-2" onClick={updateNames}>Save</button>
+            <button className="form-control btn btn-dark" onClick={updateNames}>Save</button>
           </Col>
         </Row>
         <Row style={{ marginBottom: 10 }}>
