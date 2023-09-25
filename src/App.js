@@ -23,6 +23,7 @@ function App() {
   }
 
   const copySessionInfo = async e => {
+    await updateNames();
     await navigator.clipboard.writeText(`${window.location.origin}?session=${sessionName}`)
     await clipboardIndicator.classList.add('green')
     setTimeout(() => {
