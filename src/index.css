@@ -10,6 +10,12 @@
                 url(./img/wheel_back_empty.png) no-repeat center/920px 1085px;
 }
 
+#winwheel .canvas-bg-naevia
+{
+    background: url(./img/naevia.png) no-repeat center/500px 500px, 
+                url(./img/wheel_back_empty.png) no-repeat center/920px 1085px;
+}
+
 #winwheel .canvas-bg-dustydan
 {
     background: url(./img/dustydan.png) no-repeat center/260px 260px, 

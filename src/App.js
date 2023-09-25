@@ -5,6 +5,7 @@ import { Modal, Button, Container, Row, Col } from 'react-bootstrap'
 function App() {
   const [theWheel, setTheWheel] = useState({})
   const [wheelContents, setWheelContents] = useState([])
+  const [wheelColors, setWheelColors] = useState(["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"])
   const [wheelReadyToSpin, setWheelReadyToSpin] = useState(true)
   const [names, setNames] = useState('')
   const [winner, setWinner] = useState('')
@@ -12,7 +13,6 @@ function App() {
   const [bgName, setBgName] = useState('')
   const [show, setShow] = useState(false)
   const [clipboardIndicator, setClipboardIndicator] = useState({})
-  const wheelColors = ["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"]
 
   const handleNameChange = async e => {
     await populateWheel(e.target.value)
@@ -104,15 +104,23 @@ function App() {
     switch (name) {
       case 'HAWF':
         bgName = 'canvas-bg-hawf'
+        setWheelColors(["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"])
         break;
+      case 'Naevia':
+          bgName = 'canvas-bg-naevia'
+          setWheelColors(["#5f5dbc", "#e87722", "#002f87", "#e7706f"])
+          break;
       case 'DustyDan':
         bgName = 'canvas-bg-dustydan'
+        setWheelColors(["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"])
         break;
       case 'DD':
         bgName = 'canvas-bg-dd'
+        setWheelColors(["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"])
         break;
       default:
         bgName = localStorage.getItem('bgName')
+        setWheelColors(["#eae56f", "#89f26e", "#7de6ef", "#e7706f", "#CC5500"])
         break;
     }
 
@@ -242,6 +250,7 @@ function App() {
               <option value="DD" selected={bgName == 'canvas-bg-dd'}>Drifting Drams</option>
               <option value="DustyDan" selected={bgName == 'canvas-bg-dustydan'}>Dusty Dan</option>
               <option value="HAWF" selected={bgName == 'canvas-bg-hawf'}>Hello Again Whiskey Friends</option>
+              <option value="Naevia" selected={bgName == 'canvas-bg-naevia'}>Naevia</option>
             </select>
           </Col>
         </Row>
@@ -263,7 +272,7 @@ function App() {
       <Modal.Header closeButton>
         <Modal.Title>Winner</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Congratulations, {winner}!</Modal.Body>
+      <Modal.Body><h2>Congratulations, {winner}!</h2></Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={closeAndRemove}>
           Remove Entry
