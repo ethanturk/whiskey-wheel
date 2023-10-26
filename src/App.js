@@ -50,7 +50,7 @@ function App() {
     setWheelReadyToSpin(true)
   }
 
-  async function removeName() {
+  async function removeEntry() {
     var nameArray = names.split('\n')
     for (var i = 0; i < nameArray.length; i++) {
       if (nameArray[i] === winner) {
@@ -63,18 +63,22 @@ function App() {
     await populateWheel(newOrder)
   }
 
-  async function closeAndRemove() {
-    await removeName()
+  async function removeName() {
+    var newOrder = names.split('\n').filter((name) => name !== winner).join('\n')
+    setNames(newOrder)
+    await populateWheel(newOrder)
+  }
+
+  async function closeAndRemoveOne() {
+    await removeEntry()
     setShow(false)
     setWheelReadyToSpin(true)
   }
 
-  async function closeAndRemoveAndSpin() {
-    removeName().then(() => {
-      setShow(false)
-      setWheelReadyToSpin(true)
-      spinWheel(true)
-    })
+  async function closeAndRemoveAll() {
+    await removeName()
+    setShow(false)
+    setWheelReadyToSpin(true)
   }
 
   async function randomizeNames() {
@@ -273,11 +277,11 @@ function App() {
       </Modal.Header>
       <Modal.Body><h2>Congratulations, {winner}!</h2></Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={closeAndRemove}>
-          Remove Entry
+        <Button variant="primary" onClick={closeAndRemoveOne}>
+          Remove 1 Entry
         </Button>
-        <Button variant="primary" onClick={closeAndRemoveAndSpin}>
-          Remove Entry and Spin Again
+        <Button variant="primary" onClick={closeAndRemoveAll}>
+          Remove All Entries
         </Button>
         <Button variant="secondary" onClick={closeOnly}>
           Close
